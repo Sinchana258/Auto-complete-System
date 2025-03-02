@@ -10,16 +10,17 @@ A real-time *auto-complete system* built using JavaScript, HTML, and CSS. It pro
 - Supports keyboard navigation (Arrow keys & Enter).
 - Includes fade-in and fade-out animations for a smooth UI.
 
-
 ## Installation
 1. Clone the Repository
    ```sh
+    https://github.com/Sinchana258/AutoComplete-System.git
    
-     Open index.html in your browser.
+2. Open index.html in your browser.
+
 # Usage
-Start typing in the search box.
-Suggestions appear dynamically.
-Click on a suggestion or use the keyboard (Arrow keys + Enter) to select.
+- Start typing in the search box.
+- Suggestions appear dynamically.
+- Click on a suggestion or use the keyboard (Arrow keys + Enter) to select.
 
 # Contributing
 Feel free to fork the repository and submit a pull request with improvements!
