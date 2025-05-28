@@ -14,7 +14,21 @@
     <input type="text" id="searchBox" placeholder="Start typing...">
     <div class="suggestions" id="suggestionsBox"></div>
 
+    <!-- Load your main logic -->
     <script src="script.js"></script>
+
+    <!-- Load trigram model AFTER script.js so it's available -->
+    <script>
+        let trigramModel = {};
+
+        fetch('trigramMap.json')
+            .then(res => res.json())
+            .then(data => {
+                trigramModel = data;
+                console.log("Trigram model loaded.");
+            })
+            .catch(err => console.error("Error loading trigram model:", err));
+    </script>
 </body>
 
 </html>

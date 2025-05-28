@@ -1,63 +1,65 @@
-async function fetchSuggestions(query) {
-    if (!query) return [];
-    const response = await fetch(`https://api.datamuse.com/words?sp=${query}*&max=5`);
-    const data = await response.json();
-    return data.map(wordObj => wordObj.word);
-}
-
-// Function to fetch word suggestions from an external API with caching
+const searchBox = document.getElementById("searchBox");
+const suggestionsBox = document.getElementById("suggestionsBox");
 const cache = new Map();
+let selectedIndex = -1;
+let trigramModel = {};
+let modelReady = false;
 
+// Load trigram model
+fetch('trigramMap.json')
+    .then(res => res.json())
+    .then(data => {
+        trigramModel = data;
+        modelReady = true;
+        console.log("Trigram model loaded.");
+    })
+    .catch(err => console.error("Failed to load trigram model:", err));
+
+// Fetch suggestions from API with caching
 async function fetchSuggestions(query) {
     if (!query) return [];
-
-    // Check if suggestions for this query are already cached
-    if (cache.has(query)) {
-        return cache.get(query);
-    }
+    if (cache.has(query)) return cache.get(query);
 
     const apiUrl = `https://api.datamuse.com/words?sp=${query}*&max=5`;
     const response = await fetch(apiUrl);
     const data = await response.json();
     const suggestions = data.map(item => item.word);
-
-    // Store in cache to prevent redundant API calls
     cache.set(query, suggestions);
-
     return suggestions;
 }
 
-// Get references to the input box and suggestions container
-const searchBox = document.getElementById("searchBox");
-const suggestionsBox = document.getElementById("suggestionsBox");
-
-// Track selected suggestion index for keyboard navigation
-let selectedIndex = -1;
-
-// Event listener for user input
+// Main input listener
 searchBox.addEventListener("input", async () => {
-    const inputText = searchBox.value.trim(); // Remove extra spaces
-    const wordsArray = inputText.split(" "); // Split input into words
-    const lastWord = wordsArray[wordsArray.length - 1]; // Get last word
+    if (!modelReady) return; // Wait for trigram model
 
-    suggestionsBox.innerHTML = ""; // Clear previous suggestions
-    if (!lastWord) return; // Stop if there's no last word
+    const inputText = searchBox.value.trim();
+    const wordsArray = inputText.split(" ");
+    const lastWord = wordsArray[wordsArray.length - 1];
+    const context = wordsArray.slice(-2).join(" ").toLowerCase();
 
-    const suggestions = await fetchSuggestions(lastWord); // Fetch suggestions
-    selectedIndex = -1; // Reset selection index
+    suggestionsBox.innerHTML = "";
+    if (!lastWord) return;
 
-    // Generate suggestion elements and add to the DOM with fade-in animation
+    let suggestions = [];
+
+    if (trigramModel[context]) {
+        suggestions = Object.entries(trigramModel[context])
+            .sort((a, b) => b[1] - a[1])
+            .map(entry => entry[0])
+            .slice(0, 5);
+    } else {
+        suggestions = await fetchSuggestions(lastWord); // Fallback to API
+    }
+
+    selectedIndex = -1;
+
     suggestions.forEach((suggestion, index) => {
         const suggestionElement = document.createElement("div");
         suggestionElement.className = "suggestion";
         suggestionElement.innerHTML = highlightMatch(suggestion, lastWord);
-
-        // When a suggestion is clicked, update the input box
         suggestionElement.onclick = () => selectSuggestion(suggestion, wordsArray);
-
         suggestionsBox.appendChild(suggestionElement);
 
-        // Apply fade-in animation
         setTimeout(() => {
             suggestionElement.style.opacity = "1";
             suggestionElement.style.transform = "translateY(0)";
@@ -65,7 +67,7 @@ searchBox.addEventListener("input", async () => {
     });
 });
 
-// Event listener for keyboard navigation
+// Keyboard navigation
 searchBox.addEventListener("keydown", (event) => {
     const suggestions = document.querySelectorAll(".suggestion");
     if (suggestions.length === 0) return;
@@ -81,18 +83,16 @@ searchBox.addEventListener("keydown", (event) => {
         suggestions[selectedIndex].click();
     }
 
-    // Highlight selected suggestion
     suggestions.forEach((s, i) => {
         s.style.backgroundColor = i === selectedIndex ? "#ff4757" : "#662d40";
     });
 });
 
-// Function to update input box with selected suggestion
+// Suggestion selection
 function selectSuggestion(suggestion, wordsArray) {
     wordsArray[wordsArray.length - 1] = suggestion;
     searchBox.value = wordsArray.join(" ") + " ";
 
-    // Apply fade-out animation before clearing suggestions
     document.querySelectorAll(".suggestion").forEach((s, i) => {
         s.style.opacity = "0";
         s.style.transform = "translateY(-10px)";
@@ -100,7 +100,7 @@ function selectSuggestion(suggestion, wordsArray) {
     });
 }
 
-// Function to highlight matched part in suggestions
+// Highlight matching part
 function highlightMatch(suggestion, query) {
     const regex = new RegExp(`(${query})`, "gi");
     return suggestion.replace(regex, '<span style="color: yellow; font-weight: bold;">$1</span>');

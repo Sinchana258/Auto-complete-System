@@ -1,0 +1,43 @@
+{
+  "the quick": {
+    "brown": 1,
+    "blue": 1
+  },
+  "quick brown": {
+    "fox": 1
+  },
+  "brown fox": {
+    "jumps": 1
+  },
+  "fox jumps": {
+    "over": 1
+  },
+  "jumps over": {
+    "the": 1
+  },
+  "over the": {
+    "lazy": 1,
+    "hill": 1
+  },
+  "the lazy": {
+    "dog": 1
+  },
+  "lazy dog": {
+    "the": 1
+  },
+  "dog the": {
+    "quick": 1
+  },
+  "quick blue": {
+    "bird": 1
+  },
+  "blue bird": {
+    "flew": 1
+  },
+  "bird flew": {
+    "over": 1
+  },
+  "flew over": {
+    "the": 1
+  }
+}
