@@ -22,7 +22,6 @@ A real-time *auto-complete system* built using JavaScript, HTML, and CSS. It pro
 - Suggestions appear dynamically.
 - Click on a suggestion or use the keyboard (Arrow keys + Enter) to select.
 
-# Contributing
-Feel free to fork the repository and submit a pull request with improvements!
+
 
 
