@@ -13,7 +13,7 @@ A real-time *auto-complete system* built using JavaScript, HTML, and CSS. It pro
 ## Installation
 1. Clone the Repository
    ```sh
-    https://github.com/Sinchana258/AutoComplete-System.git
+     git clone https://github.com/Sinchana258/AutoComplete-System.git
    
 2. Open index.html in your browser.
 
