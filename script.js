@@ -19,7 +19,6 @@ fetch('trigramMap.json')
 async function fetchSuggestions(query) {
     if (!query) return [];
     if (cache.has(query)) return cache.get(query);
-
     const apiUrl = `https://api.datamuse.com/words?sp=${query}*&max=5`;
     const response = await fetch(apiUrl);
     const data = await response.json();
@@ -105,3 +104,4 @@ function highlightMatch(suggestion, query) {
     const regex = new RegExp(`(${query})`, "gi");
     return suggestion.replace(regex, '<span style="color: yellow; font-weight: bold;">$1</span>');
 }
+
