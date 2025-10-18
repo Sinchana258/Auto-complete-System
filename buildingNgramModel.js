@@ -16,4 +16,5 @@ trigrams.forEach(([w1, w2, w3]) => {
 });
 
 fs.writeFileSync("trigramMap.json", JSON.stringify(trigramMap, null, 2));
-console.log("✅ trigramMap.json created!");
+console.log(" trigramMap.json created!");
+
